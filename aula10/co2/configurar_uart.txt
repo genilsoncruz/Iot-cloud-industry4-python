@@ -1,0 +1,23 @@
+HABILITAR UART NO RASPBERRY PI
+
+1. Execute:
+
+sudo raspi-config
+
+2. Vá em:
+
+Interface Options
+Serial Port
+
+3. Configure:
+
+Login shell over serial? -> NÃO
+Enable serial hardware? -> SIM
+
+4. Reinicie:
+
+sudo reboot
+
+5. Verifique:
+
+ls -l /dev/serial0
