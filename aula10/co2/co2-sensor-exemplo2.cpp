@@ -1,31 +1,87 @@
-// Definindo o pino analógico conectado ao sensor
-const int pinoSensor = A0; 
+const int pinoSensor = A0;
+
 int valorLido = 0;
 
+float tensao = 0;
+
 void setup() {
-  // Inicializa a comunicação serial a 9600 bps
-  Serial.begin(9600); 
-  
-  Serial.println("Aquecendo o sensor MQ-135...");
-  // O sensor precisa de um tempo de pré-aquecimento para dar leituras estáveis
-  delay(5000); 
+
+  Serial.begin(115200);
+
+  Serial.println();
+  Serial.println("================================");
+  Serial.println("MQ135 + ESP8266");
+  Serial.println("Aquecendo sensor...");
+  Serial.println("================================");
+
+  // MQ135 precisa aquecer
+  delay(30000);
+
+  Serial.println("Sensor pronto!");
 }
 
 void loop() {
-  // Realiza a leitura do pino analógico (retorna de 0 a 1023)
-  valorLido = analogRead(pinoSensor); 
-  
-  // Imprime o valor no Monitor Serial
-  Serial.print("Valor Analógico Bruto: ");
-  Serial.println(valorLido);
-  
-  // Lógica simples de alerta baseada no valor lido
-  if (valorLido > 400) {
-    Serial.println("⚠️ Alerta: Concentração de gás elevada / Ar poluído!");
-  } else {
-    Serial.println("✅ Qualidade do ar normal.");
+
+  long soma = 0;
+
+  // Média de 100 leituras
+  for (int i = 0; i < 100; i++) {
+
+    soma += analogRead(pinoSensor);
+
+    delay(5);
   }
-  
-  // Aguarda 2 segundos antes da próxima leitura
-  delay(2000); 
+
+  valorLido = soma / 100;
+
+  // Conversão aproximada
+  tensao =
+    valorLido * (3.3 / 1023.0);
+
+  Serial.println();
+
+  Serial.print("Valor ADC: ");
+  Serial.println(valorLido);
+
+  Serial.print("Tensao: ");
+  Serial.print(tensao);
+  Serial.println(" V");
+
+  // Percentual aproximado
+  int qualidade =
+    map(valorLido, 0, 1023, 100, 0);
+
+  Serial.print("Qualidade do ar: ");
+  Serial.print(qualidade);
+  Serial.println("%");
+
+  // Faixas simples
+  if (valorLido < 250) {
+
+    Serial.println(
+      "✅ Ar limpo"
+    );
+
+  } else if (valorLido < 400) {
+
+    Serial.println(
+      "⚠️ Qualidade moderada"
+    );
+
+  } else if (valorLido < 700) {
+
+    Serial.println(
+      "⚠️ Ar poluido"
+    );
+
+  } else {
+
+    Serial.println(
+      "🚨 Alta concentracao de gases"
+    );
+  }
+
+  Serial.println("------------------------");
+
+  delay(2000);
 }
