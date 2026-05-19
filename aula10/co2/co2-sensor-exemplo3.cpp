@@ -41,7 +41,7 @@ void loop() {
     Serial.print(ppm);
     Serial.println(" ppm");
 
-    enviarDadosFirebase("SC8-device-001", -23.55052, -46.633308, 760.0, 0.0, ppm, millis() / 1000);
+    enviarDadosFirebase("SC8-device-000", -20.341715519150817, -40.2955110665028, 760.0, 0.0, ppm, millis() / 1000);
 
   } else {
 
